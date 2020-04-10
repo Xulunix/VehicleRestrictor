@@ -13,8 +13,8 @@ Vehicles = {
 	["T90"] = {Team=2, Type=6}, 
 	["Mi28"] = {Team=2, Type=7}, 
 	["Ka-60"] = {Team=2, Type=3}, -- RU Transport heli
-	["Pantsir-S1"] = {Team=2, Type=5}, -- RU Stationary AA
-	["9K22_Tunguska_M"] = {Team=2, Type=4}, -- RU Mobile AA
+	["Pantsir-S1"] = {Team=2, Type=4}, -- RU Stationary AA
+	["9K22_Tunguska_M"] = {Team=2, Type=5}, -- RU Mobile AA
 	["VDV Buggy"] = {Team=0, Type=2}, -- RU, set as neutral because spawns outside of base
 	
 	-- Stationary Map
