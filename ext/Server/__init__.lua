@@ -115,7 +115,7 @@ end
 
 -- hook gets called when soldier HP changes
 function vehicleRestrictor:OnPlayerDamage(hook, soldier, info, giverInfo)
-	if info.damage < 0 or soldier.player == nil then -- negative damage = heal or player already dead
+	if info.damage < 0 or soldier.alive == false then -- negative damage = heal or player already dead
 		return
 	end
 	
@@ -157,86 +157,58 @@ function vehicleRestrictor:handleSteal(player, vehicle)
 		print("Player " .. player.name .. " stole vehicle " .. vehicleName) 
 	end
 	
-	if Settings.DELAY > 0.1 then
-		-- Action with delay
-		if Settings.PUNISHMENT_TYPE == 1 then
-			local function killWrapper() return self:killPlayer(player) end
-			local result = m_Timer:CreateDelay(player.guid:ToString("D"), Settings.DELAY, killWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die in " .. string.format("%.0f",Settings.DELAY), Settings.DELAY, player)
-				end
-			end
-		end
-		
-		-- Destroy Vehicle (and player in it)
-		if Settings.PUNISHMENT_TYPE == 2 then
-			local function destroyWrapper() return self:destroyVehicle(vehicle, player) end	
-			local result = m_Timer:CreateDelay(player.guid:ToString("D"), Settings.DELAY, destroyWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die in " .. string.format("%.0f",Settings.DELAY), Settings.DELAY, player)
-				end
-			end
-		end
-
-		-- Damage player over time
-		if Settings.PUNISHMENT_TYPE == 3 then
-			local function damageWrapper() return self:damagePlayer(player.soldier) end	
-			local result = m_Timer:CreateInterval(player.guid:ToString("D"), Settings.DELAY, Settings.INTERVAL, damageWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
-				end
-			end
-		end
-
-		-- Damage Vehicle over time
-		if Settings.PUNISHMENT_TYPE == 4 then
-			local function damageWrapper() return self:damageVehicle(vehicle) end	
-			local result = m_Timer:CreateInterval(player.guid:ToString("D"), Settings.DELAY, Settings.INTERVAL, damageWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
-				end
-			end
-		end
-	else
-		-- Instant Action
-		-- Kill Player
-		if Settings.PUNISHMENT_TYPE == 1 then
-			self:killPlayer(player)
-		end
-		
-		-- Destroy Vehicle (and player in it)
-		if Settings.PUNISHMENT_TYPE == 2 then
-			self:destroyVehicle(vehicle, player)
-		end
-
-		-- Damage player over time
-		if Settings.PUNISHMENT_TYPE == 3 then
-			local function damageWrapper() return self:damagePlayer(player.soldier) end	
-			local result = m_Timer:CreateInterval(player.guid:ToString("D"), 0, Settings.INTERVAL, damageWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
-				end
-			end
-		end
-
-		-- Damage Vehicle over time
-		if Settings.PUNISHMENT_TYPE == 4 then
-			local function damageWrapper() return self:damageVehicle(vehicle) end	
-			local result = m_Timer:CreateInterval(player.guid:ToString("D"), Settings.DELAY, Settings.INTERVAL, damageWrapper)
-			if result then
-				if Settings.SHOW_WARNING then
-					ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
-				end
+	-- Kill the player
+	if Settings.PUNISHMENT_TYPE == 1 then
+		local function killWrapper() return self:killPlayer(player) end
+		local result = m_Timer:CreateDelay(player.guid:ToString("D"), Settings.DELAY, killWrapper)
+		if result then
+			if Settings.SHOW_WARNING then
+				ChatManager:Yell("RESTRICTED VEHICLE: Get out or die in " .. string.format("%.0f",Settings.DELAY), Settings.DELAY, player)
 			end
 		end
 	end
+	
+	-- Destroy Vehicle (and player in it)
+	if Settings.PUNISHMENT_TYPE == 2 then
+		local function destroyWrapper() return self:destroyVehicle(vehicle, player) end	
+		local result = m_Timer:CreateDelay(player.guid:ToString("D"), Settings.DELAY, destroyWrapper)
+		if result then
+			if Settings.SHOW_WARNING then
+				ChatManager:Yell("RESTRICTED VEHICLE: Get out or die in " .. string.format("%.0f",Settings.DELAY), Settings.DELAY, player)
+			end
+		end
+	end
+
+	-- Damage player over time
+	if Settings.PUNISHMENT_TYPE == 3 then
+		local function damageWrapper() return self:damagePlayer(player.soldier) end	
+		local result = m_Timer:CreateInterval(player.guid:ToString("D"), Settings.DELAY, Settings.INTERVAL, damageWrapper)
+		if result then
+			if Settings.SHOW_WARNING then
+				ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
+			end
+		end
+	end
+
+	-- Damage Vehicle over time
+	if Settings.PUNISHMENT_TYPE == 4 then
+		local function damageWrapper() return self:damageVehicle(vehicle) end	
+		local result = m_Timer:CreateInterval(player.guid:ToString("D"), Settings.DELAY, Settings.INTERVAL, damageWrapper)
+		if result then
+			if Settings.SHOW_WARNING then
+				ChatManager:Yell("RESTRICTED VEHICLE: Get out or die", 100, player)
+			end
+		end
+	end
+
+	-- Kick player out of the vehicle
+	if Settings.PUNISHMENT_TYPE == 5 then
+		local function exitWrapper() return self:kickFromVehicle(player) end	
+		m_Timer:CreateDelay(player.guid:ToString("D"), Settings.DELAY, exitWrapper)
+	end
 end
 
+-- Kill a player by applying damage to it (much of it)
 function vehicleRestrictor:killPlayer(player)
 	if Settings.DEBUG_LEVEL >= 2 then
 		print("Killing player " .. player.name)
@@ -257,6 +229,7 @@ function vehicleRestrictor:killPlayer(player)
 	return
 end
 
+-- destroy a vehicle by firing the "Destroy" event and destroying it if neccesary
 function vehicleRestrictor:destroyVehicle(vehicle, player)
 	local cVehicleData = VehicleEntityData(vehicle.data)
 	local vehicleName = shortVehicleName(cVehicleData.controllableType)
@@ -283,7 +256,7 @@ function vehicleRestrictor:destroyVehicle(vehicle, player)
 	return
 end
 
-
+-- apply damage to a vehicle
 function vehicleRestrictor:damageVehicle(vehicle)
 	if vehicle ~= nil and vehicle.typeInfo.name == "ServerVehicleEntity" then
 		local cVehicleData = VehicleEntityData(vehicle.data)
@@ -297,12 +270,13 @@ function vehicleRestrictor:damageVehicle(vehicle)
 			print("Damaged vehicle")
 		end
 	end
+	
 
 end
 
-
+-- apply damage to a player
 function vehicleRestrictor:damagePlayer(soldier)
-	if soldier ~= nil then
+	if soldier ~= nil and soldier.isAlive then
 		local damageInfo = DamageInfo()
 		damageInfo.damage = soldier.maxHealth * Settings.DAMAGE / 100
 		damageInfo.position = soldier.transform.trans
@@ -317,6 +291,15 @@ function vehicleRestrictor:damagePlayer(soldier)
 
 end
 
+-- force a player to leave the current vehicle
+function vehicleRestrictor:kickFromVehicle(player)
+	if player.soldier ~= nil and player.soldier.isAlive then
+		player:ExitVehicle(true, true)
+		if Settings.DEBUG_LEVEL >= 1 then
+			print("Kicked player out of vehicle")
+		end
+	end
+end
 
 
 
