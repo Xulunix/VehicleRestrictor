@@ -11,16 +11,16 @@ Settings = {
 	-- 2 = Kill player & destroy vehicle
 	-- 3 = Damage player over time
 	-- 4 = Damage vehicle over time
-	PUNISHMENT_TYPE = 1,
+	PUNISHMENT_TYPE = 2,
 	
 	-- ### Punishment trigger ###
 	-- 1 = Entering vehicle
 	-- 2 = Damaging enemy vehicle or player
-	TRIGGER  = 1,
+	TRIGGER  = 2,
 	
 	-- ### Punishment delay after trigger (in seconds) ###
 	-- If player leaves the vehicle before the delay is over, no action will be taken
-	DELAY = 3.0,
+	DELAY = 10.0,
 	
 	-- ### Punishment interval (in seconds) ###
 	-- Applies damage every X seconds. Only used with PUNISHMENT_TYPE = 3/4

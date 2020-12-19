@@ -3,7 +3,7 @@ Vehicles = {
 	["AH1Z"] = {Team=1, Type=7}, -- US attack heli
 	["Venom"] = {Team=1, Type=3}, -- US transport heli
 	["Centurion_C-RAM"] = {Team=1, Type=4}, -- US Stationary AA
-	["F16"] = {Team=1, Type=9},  
+	["F16"] = {Team=1, Type=9},
 	["LAV_AD"] = {Team=1, Type=5}, -- US Mobile AA 
 	["M1Abrams"] = {Team=1, Type=6}, 
 	["GrowlerITV"] = {Team=0, Type=2}, -- US, set as neutral because spawns outside of base

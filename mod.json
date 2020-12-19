@@ -1,9 +1,12 @@
 {
 	"Name": "VehicleRestrictory",
 	"Authors": ["XuluniX"],
-	"Description": "Stop players from stealing vehicles of the other team",
+	"Description": "Restricts usage of vehicles for everyone or just a team",
 	"URL": "none",
-	"Version": "0",
+	"Version": "0.0.1",
 	"HasWebUI": false,
-	"HasVeniceEXT": true
+	"HasVeniceEXT": true,
+	"Dependencies": {
+        "veniceext": "^1.0.0"
+    }
 }
