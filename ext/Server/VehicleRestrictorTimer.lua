@@ -84,7 +84,7 @@ function VehicleRestrictorTimer:CreateInternal(name, delay, reps, func, isRepeti
 		interval = interval
 	}
 
-	print("timer name: " .. name .. ' delay: ' .. delay)
+	print("Created timer name: " .. name .. ' delay: ' .. delay ..  ' interval: ' .. interval)
 	VehicleRestrictorTimer:Start(name)
 	return true
 end
@@ -104,7 +104,7 @@ function VehicleRestrictorTimer:Check()
 					print("removed timer " .. tmr.name)
 				end
 			else
-				tmr.delay = interval
+				tmr.delay = tmr.interval
 			end
 		end
 	end

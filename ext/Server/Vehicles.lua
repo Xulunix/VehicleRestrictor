@@ -1,6 +1,6 @@
 Vehicles = { 
 	-- US Vehicles
-	["AH1Z"] = {Team=1, Type=7}, -- US attack heli
+	["AH1Z"] = {Team=2, Type=7}, -- US attack heli
 	["Venom"] = {Team=1, Type=3}, -- US transport heli
 	["Centurion_C-RAM"] = {Team=1, Type=4}, -- US Stationary AA
 	["F16"] = {Team=1, Type=9},
