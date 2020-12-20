@@ -81,7 +81,9 @@ end
 
 -- Player killed event (Player, player, Vec3, string, bool, bool, bool)
 function vehicleRestrictor:OnPlayerKilled(player, inflictor, position, weapon, roadKill, headShot, victimInReviveState)
-    print((inflictor and inflictor.name or player.name) .. " killed " .. player.name .. " with " .. weapon .. " (" .. (roadKill and "roadkill " or "") .. (headShot and "headshot" or "") .. ")")
+	if Settings.DEBUG_LEVEL >= 1 then
+		print((inflictor and inflictor.name or player.name) .. " killed " .. player.name .. " with " .. weapon .. " (" .. (roadKill and "roadkill " or "") .. (headShot and "headshot" or "") .. ")")
+	end
 	m_Timer:Delete(player.guid:ToString("D")) 
 end
 
