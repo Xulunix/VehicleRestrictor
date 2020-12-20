@@ -4,7 +4,7 @@
 --   0 = Vehicle is neutral, everyone can use it
 --   1 to 16 (1 is US; 2 is RU, other nubers are squads for SQDM)
 -- Default configuration is to prevent players using ANY enemy vehicles, except transport jeeps
-
+-- Depending on map and gamemode, you might want to allow Tanks or other vehicles to be used by both teams
 Vehicles = { 
 	-- US Vehicles
 	["AH1Z"] = {Team=1}, -- US attack heli
