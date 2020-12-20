@@ -49,8 +49,12 @@ function vehicleRestrictor:OnEnterVehicle(vehicle, player)
 	
 	local cVehicleData = VehicleEntityData(vehicle.data)
 	local vehicleName = shortVehicleName(cVehicleData.controllableType)
+	if Vehicles[vehicleName] == nil then
+		print("MISSING VEHICLE INFO: '" .. vehicleName .."'")
+		return
+	end
 	if Settings.DEBUG_LEVEL >= 1 then
-		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") entered vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] .."|".. VehicleTypes[Vehicles[vehicleName].Type] ..")")
+		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") entered vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] ..")")
 	end
 	if Settings.TRIGGER == 1 and Vehicles[vehicleName].Team ~= 0 and Vehicles[vehicleName].Team ~= player.teamId then	
 		vehicleRestrictor:handleSteal(player, vehicle)
@@ -70,7 +74,7 @@ function vehicleRestrictor:OnExitVehicle(vehicle, player)
 	local cVehicleData = VehicleEntityData(vehicle.data)
 	local vehicleName = shortVehicleName(cVehicleData.controllableType)
 	if Settings.DEBUG_LEVEL >= 1 then
-		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") left vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] .."|".. VehicleTypes[Vehicles[vehicleName].Type] ..")")
+		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") left vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] ..")")
 	end
 	m_Timer:Delete(player.guid:ToString("D")) -- remove possibly existing punishment timer
 end
@@ -146,6 +150,7 @@ function vehicleRestrictor:OnPlayerDamage(hook, soldier, info, giverInfo)
 	end
 end
 
+-- Do punishment if a forbidden vehicle was detected
 function vehicleRestrictor:handleSteal(player, vehicle)
 	if Settings.DEBUG_LEVEL >= 2 then
 		print("HandleSteal VehicleType: " .. vehicle.typeInfo.name)
@@ -154,7 +159,7 @@ function vehicleRestrictor:handleSteal(player, vehicle)
 	local cVehicleData = VehicleEntityData(vehicle.data)
 	local vehicleName = shortVehicleName(cVehicleData.controllableType)
 	if Settings.DEBUG_LEVEL >= 1 then
-		print("Player " .. player.name .. " stole vehicle " .. vehicleName) 
+		print("Player " .. player.name .. " used forbidden vehicle " .. vehicleName) 
 	end
 	
 	-- Kill the player
@@ -217,15 +222,17 @@ function vehicleRestrictor:killPlayer(player)
 	local soldier = SoldierEntity(player.soldier)
 	
 	local damageInfo = DamageInfo()
-    damageInfo.damage = soldier.maxHealth * 2
+    damageInfo.damage = soldier.maxHealth * 2 -- use twice the maximum health, just to be sure
     damageInfo.position = soldier.transform.trans
     damageInfo.direction = Vec3(0, 1, 0)
 	damageInfo.shouldForceDamage = true
 	damageInfo.isExplosionDamage = true
 	soldier:ApplyDamage(damageInfo)
 	
-	print("Killed player " .. player.name .. " for stealing vehicle ")
-	ChatManager:SendMessage("Killed " .. player.name .. " for stealing a vehicle")
+	print("Killed player " .. player.name .. " for using a restricted vehicle ")
+	if(Settings.ANNOUNCE_IN_CHAT) then
+		ChatManager:SendMessage("Killed " .. player.name .. " for using a restricted vehicle")
+	end	
 	return
 end
 
@@ -251,8 +258,11 @@ function vehicleRestrictor:destroyVehicle(vehicle, player)
 	if player.hasSoldier and player.soldier ~= nil then -- kill player if he is still alive
 		self:killPlayer(player)
 	end
-	print("Killed player " .. player.name .. " for stealing vehicle (" ..vehicleName .. "), destroyed vehicle")
-	ChatManager:SendMessage("Killed " .. player.name .. " for stealing a vehicle")
+	print("Killed player " .. player.name .. " for using a restricted vehicle (" ..vehicleName .. "), destroyed vehicle")
+	
+	if(Settings.ANNOUNCE_IN_CHAT) then
+		ChatManager:SendMessage("Killed " .. player.name .. " for using a restricted vehicle")
+	end	
 	return
 end
 
@@ -270,8 +280,6 @@ function vehicleRestrictor:damageVehicle(vehicle)
 			print("Damaged vehicle")
 		end
 	end
-	
-
 end
 
 -- apply damage to a player

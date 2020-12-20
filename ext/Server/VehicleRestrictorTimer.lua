@@ -1,14 +1,13 @@
+-- Custom timer for VehicleRestriction
 class "VehicleRestrictorTimer"
 local currentTime = 0
 local lastDelta = 0
 local timers = {}
 
 function VehicleRestrictorTimer:__init()
-
+	-- Register to the Update-Event
 	Events:Subscribe('UpdateManager:Update', self, self.OnEngineUpdate)
 end
-
-
 
 function VehicleRestrictorTimer:GetTimers()
 	return timers
@@ -23,8 +22,9 @@ function VehicleRestrictorTimer:GetTimer(timerName)
 	return timers[timerName]
 end
 
+-- Gets called every engine update/Frame
 function VehicleRestrictorTimer:OnEngineUpdate(p_Delta, updatePass)
-	if updatePass ~= 0 then -- only on PreSim
+	if updatePass ~= 0 then -- only du stuff on PreSim (others crash the server if you touch vehicles)
 		return
 	end
 	lastDelta = lastDelta + p_Delta
@@ -34,11 +34,12 @@ function VehicleRestrictorTimer:OnEngineUpdate(p_Delta, updatePass)
 	VehicleRestrictorTimer:Check()
 end
 
-
+-- Create a simple timer with delay, gets called once
 function VehicleRestrictorTimer:CreateDelay(name, delay, func)
 	return VehicleRestrictorTimer:CreateInternal(name, delay, 1, func, false)
 end
 
+-- Create a repeating timer which gets called multiple times (initial delay and then every interval)
 function VehicleRestrictorTimer:CreateInterval(name, delay, interval, func)
 	return VehicleRestrictorTimer:CreateInternal(name, delay, 0, func, true, interval)
 end
@@ -89,6 +90,7 @@ function VehicleRestrictorTimer:CreateInternal(name, delay, reps, func, isRepeti
 	return true
 end
 
+-- Checks if a timer is due to run now
 function VehicleRestrictorTimer:Check()
 	local t = currentTime
 	for name,tmr in pairs(timers) do
@@ -110,6 +112,7 @@ function VehicleRestrictorTimer:Check()
 	end
 end
 
+-- Starts a timer
 function VehicleRestrictorTimer:Start(name)
 	print('Starting timer: ' .. name)
 	local t = timers[name]
@@ -123,7 +126,7 @@ function VehicleRestrictorTimer:Start(name)
 	return true
 end
 
-
+-- Deletes a timer
 function VehicleRestrictorTimer:Delete(name)
 	if name == nil or type(name) ~= "string" then
 		return
@@ -137,7 +140,7 @@ function VehicleRestrictorTimer:Delete(name)
 end
 
 
--- Singleton.
+-- Singleton, there should only be one timer instance
 if g_VehicleRestrictorTimer == nil then
     g_VehicleRestrictorTimer = VehicleRestrictorTimer()
 end

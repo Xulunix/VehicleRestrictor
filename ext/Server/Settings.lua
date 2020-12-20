@@ -16,7 +16,7 @@ Settings = {
 	-- ### Punishment trigger ###
 	-- 1 = Entering vehicle
 	-- 2 = Damaging enemy vehicle or player with a stolen vehicle
-	TRIGGER  = 2,
+	TRIGGER  = 1,
 	
 	-- ### Punishment delay after trigger (in seconds) ###
 	-- If player leaves the vehicle before the delay is over, no action will be taken
@@ -33,4 +33,7 @@ Settings = {
 	-- ### Show warning to player? ###
 	-- only used if DELAY > 0
 	SHOW_WARNING = true,
+
+	-- ### Show in chat that a player was killed/Punished
+	ANNOUNCE_IN_CHAT = true,
 }
