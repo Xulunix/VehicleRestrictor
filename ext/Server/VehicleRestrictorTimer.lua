@@ -84,8 +84,6 @@ function VehicleRestrictorTimer:CreateInternal(name, delay, reps, func, isRepeti
 		isRepetitive = false or isRepetitive,
 		interval = interval
 	}
-
-	print("Created timer name: " .. name .. ' delay: ' .. delay ..  ' interval: ' .. interval)
 	VehicleRestrictorTimer:Start(name)
 	return true
 end
@@ -103,7 +101,6 @@ function VehicleRestrictorTimer:Check()
 				tmr.reps = tmr.reps - 1
 				if tmr.reps == 0 then
 					timers[name] = nil
-					print("removed timer " .. tmr.name)
 				end
 			else
 				tmr.delay = tmr.interval
@@ -114,7 +111,6 @@ end
 
 -- Starts a timer
 function VehicleRestrictorTimer:Start(name)
-	print('Starting timer: ' .. name)
 	local t = timers[name]
 	if not t then
 		print("Tried to start nonexistant timer: "..tostring(name))
@@ -133,7 +129,6 @@ function VehicleRestrictorTimer:Delete(name)
 	end
 
 	if timers[name] ~= nil then
-		print('Delete timer: ' .. name)
 		timers[name] = nil
 	end
 	
