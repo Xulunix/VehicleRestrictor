@@ -15,6 +15,7 @@ Vehicles = {
 	["M1Abrams"] = {Team=1},  -- US Tank
 	["AAV-7A1"] = {Team=1}, -- AAV-7A1 AMTRAC transport tank
 	["M1126-Stryker"] = {Team=1}, -- US Tank destroyer
+	["M1128-Stryker"] = {Team=1}, -- US Tank destroyer
 	["MIMARS"] = {Team=1}, -- US Mobile artillery
 	["F35B"] = {Team=1}, -- US F35 hover jet
 	["A10_THUNDERBOLT"] = {Team=1}, -- US CAS jet

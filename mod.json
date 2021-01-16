@@ -3,10 +3,10 @@
 	"Authors": ["XuluniX"],
 	"Description": "Restricts usage of vehicles for everyone or just a team. Can be used to block/punish vehicle stealing or Block certain vehicles",
 	"URL": "none",
-	"Version": "0.0.1",
+	"Version": "0.0.2",
 	"HasWebUI": false,
 	"HasVeniceEXT": true,
 	"Dependencies": {
-        "veniceext": "^1.0.0"
+        "veniceext": "^1.0.8"
     }
 }

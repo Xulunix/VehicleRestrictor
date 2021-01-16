@@ -43,7 +43,7 @@ end
 
 -- Enter vehicle event (ServerVehicleEntity, Player)
 function vehicleRestrictor:OnEnterVehicle(vehicle, player)
-	if Settings.DEBUG_LEVEL >= 2 then
+	if Settings.DEBUG_LEVEL >= 3 then
 		print("EnterVehicle Type: " .. vehicle.typeInfo.name)
 	end
 	
@@ -53,7 +53,7 @@ function vehicleRestrictor:OnEnterVehicle(vehicle, player)
 		print("MISSING VEHICLE INFO: '" .. vehicleName .."'")
 		return
 	end
-	if Settings.DEBUG_LEVEL >= 1 then
+	if Settings.DEBUG_LEVEL >= 2 then
 		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") entered vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] ..")")
 	end
 	if Settings.TRIGGER == 1 and Vehicles[vehicleName].Team ~= 0 and Vehicles[vehicleName].Team ~= player.teamId then	
@@ -67,13 +67,16 @@ function vehicleRestrictor:OnExitVehicle(vehicle, player)
 		return
 	end	
 	
-	if Settings.DEBUG_LEVEL >= 2 then
-		print("ExitVehicle Type: " .. vehicle.typeInfo.name)
+	if vehicle.typeInfo.name ~= "ServerVehicleEntity" then
+		if Settings.DEBUG_LEVEL >= 3 then
+			print("ExitVehicle Type: " .. vehicle.typeInfo.name)
+		end
+		return
 	end
 	
 	local cVehicleData = VehicleEntityData(vehicle.data)
 	local vehicleName = shortVehicleName(cVehicleData.controllableType)
-	if Settings.DEBUG_LEVEL >= 1 then
+	if Settings.DEBUG_LEVEL >= 2 then
 		print("Player " .. player.name .. " (".. TeamNames[player.teamId] .. ") left vehicle " .. vehicleName .. " (".. TeamNames[Vehicles[vehicleName].Team] ..")")
 	end
 	m_Timer:Delete(player.guid:ToString("D")) -- remove possibly existing punishment timer
@@ -81,7 +84,7 @@ end
 
 -- Player killed event (Player, player, Vec3, string, bool, bool, bool)
 function vehicleRestrictor:OnPlayerKilled(player, inflictor, position, weapon, roadKill, headShot, victimInReviveState)
-	if Settings.DEBUG_LEVEL >= 1 then
+	if Settings.DEBUG_LEVEL >= 2 then
 		print((inflictor and inflictor.name or player.name) .. " killed " .. player.name .. " with " .. weapon .. " (" .. (roadKill and "roadkill " or "") .. (headShot and "headshot" or "") .. ")")
 	end
 	m_Timer:Delete(player.guid:ToString("D")) 
@@ -100,7 +103,7 @@ function vehicleRestrictor:OnDamageVehicle(vehicle, damage, giverInfo)
 	end
 	local cGiverInfo = DamageGiverInfo(giverInfo)	
 	if cGiverInfo.giverControllable ~= nil then -- check if damage source is controllable
-		if Settings.DEBUG_LEVEL >= 2 then
+		if Settings.DEBUG_LEVEL >= 3 then
 			print("cGiverInfo.giverControllable: " .. Entity(cGiverInfo.giverControllable).typeInfo.name)
 		end
 		
@@ -109,7 +112,7 @@ function vehicleRestrictor:OnDamageVehicle(vehicle, damage, giverInfo)
 			local vehicleName = shortVehicleName(controllableVehicle.controllableType)
 			if Vehicles[vehicleName].Team ~= 0 and Vehicles[vehicleName].Team ~= cGiverInfo.giver.teamId then	
 				vehicleRestrictor:handleSteal(cGiverInfo.giver, cGiverInfo.giverControllable)
-				if Settings.DEBUG_LEVEL >= 2 then
+				if Settings.DEBUG_LEVEL >= 1 then
 					print("Player " .. cGiverInfo.giver.name .. " dealt damage with forbidden vehicle " .. vehicleName) 
 				end
 			end
@@ -135,7 +138,7 @@ function vehicleRestrictor:OnPlayerDamage(hook, soldier, info, giverInfo)
 	local cGiverInfo = DamageGiverInfo(giverInfo)
 	
 	if cGiverInfo.giverControllable ~= nil then -- check if damage source is controllable
-		if Settings.DEBUG_LEVEL >= 2 then
+		if Settings.DEBUG_LEVEL >= 3 then
 			print("cGiverInfo.giverControllable: " .. Entity(cGiverInfo.giverControllable).typeInfo.name)
 		end
 		
@@ -144,7 +147,7 @@ function vehicleRestrictor:OnPlayerDamage(hook, soldier, info, giverInfo)
 			local vehicleName = shortVehicleName(controllableVehicle.controllableType)
 			if Vehicles[vehicleName].Team ~= 0 and Vehicles[vehicleName].Team ~= cGiverInfo.giver.teamId then	
 				vehicleRestrictor:handleSteal(cGiverInfo.giver, cGiverInfo.giverControllable)
-				if Settings.DEBUG_LEVEL >= 2 then
+				if Settings.DEBUG_LEVEL >= 1 then
 					print("Player " .. cGiverInfo.giver.name .. " dealt damage with forbidden vehicle " .. vehicleName) 
 				end
 			end
@@ -154,7 +157,7 @@ end
 
 -- Do punishment if a forbidden vehicle was detected
 function vehicleRestrictor:handleSteal(player, vehicle)
-	if Settings.DEBUG_LEVEL >= 2 then
+	if Settings.DEBUG_LEVEL >= 3 then
 		print("HandleSteal VehicleType: " .. vehicle.typeInfo.name)
 	end
 
@@ -217,7 +220,7 @@ end
 
 -- Kill a player by applying damage to it (much of it)
 function vehicleRestrictor:killPlayer(player)
-	if Settings.DEBUG_LEVEL >= 2 then
+	if Settings.DEBUG_LEVEL >= 1 then
 		print("Killing player " .. player.name)
 	end
 	

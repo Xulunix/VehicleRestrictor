@@ -3,6 +3,7 @@ Settings = {
 	-- 0 = Only print actions taken (default)
 	-- 1 = Info
 	-- 2 = Debug
+	-- 3 = Log everything
 	DEBUG_LEVEL = 0,
 
 	-- ### Punishment type ###
